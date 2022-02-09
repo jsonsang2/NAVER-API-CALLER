@@ -36,13 +36,12 @@ public class NaverApiController {
         // Parameter 그대로 가져오기
         Set<String> strings = httpServletRequest.getParameterMap().keySet();
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        strings.forEach(k -> params.add(k, httpServletRequest.getParameter(k)));
+        strings.forEach(k -> params.add(k, httpServletRequest.getParameter(k).replaceAll(" ", "")));
 
         // Signature 만들기
         String timestamp = String.valueOf(Instant.now().toEpochMilli());
         String signature = Signatures.of(timestamp, httpServletRequest.getMethod(), requestURI, secret);
 
-        // NAVER API 호출 요청포멧 만들기
         WebClient client = WebClient.builder()
                 .baseUrl("https://api.naver.com")
                 .defaultHeader("X-API-KEY", key)
